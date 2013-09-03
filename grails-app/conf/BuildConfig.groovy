@@ -19,6 +19,7 @@ grails.project.dependency.resolution = {
         mavenCentral()
         mavenRepo "http://metridoc.googlecode.com/svn/maven/repository/"
         mavenRepo "http://dl.bintray.com/upennlib/metridoc"
+        mavenRepo "http://dl.bintray.com/upennlib/maven"
     }
     dependencies {
         compile("org.apache.poi:poi:3.8-beta3")
@@ -31,7 +32,7 @@ grails.project.dependency.resolution = {
 
     plugins {
         build(":rest-client-builder:1.0.3")
-        compile(":metridoc-core:0.7.1")
+        compile(":metridoc-core:0.7.3")
         //TODO: Remove when we upgrade metridoc core
         compile ":hibernate:$grailsVersion"
         compile ":webxml:1.4.1"

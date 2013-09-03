@@ -35,7 +35,7 @@ class RidTransactionService {
 
 
             if (params.staffPennkey) {
-                String[] staffPennkey_splits = params.staffPennkey.split(" ");
+                String[] staffPennkey_splits = params.staffPennkey.tokenize(" ");
                 for (String s in staffPennkey_splits) {
                     if (!s.trim().isEmpty()) {
                         query = query.where {
@@ -70,7 +70,7 @@ class RidTransactionService {
             }
 
             if (params.userName) {
-                String[] userName_splits = params.userName.split(" ");
+                String[] userName_splits = params.userName.tokenize(" ");
                 for (String s in userName_splits) {
                     if (!s.trim().isEmpty()) {
                         query = query.where {
@@ -83,7 +83,7 @@ class RidTransactionService {
             }
 
             if (params.userQuestion) {
-                String[] userQuestion_splits = params.userQuestion.split(" ");
+                String[] userQuestion_splits = params.userQuestion.tokenize(" ");
                 for (String s in userQuestion_splits) {
                     if (!s.trim().isEmpty()) {
                         query = query.where {
@@ -96,7 +96,7 @@ class RidTransactionService {
             }
 
             if (params.notes) {
-                String[] notes_splits = params.notes.split(" ");
+                String[] notes_splits = params.notes.tokenize(" ");
                 for (String s in notes_splits) {
                     if (!s.trim().isEmpty()) {
                         query = query.where {
@@ -140,25 +140,23 @@ class RidTransactionService {
                 }
             }
 
-            if (params.staffPennkey) {
-                String[] staffPennkey_splits = params.staffPennkey.split(" ");
-                for (String s in staffPennkey_splits) {
+            if (params.instructorPennkey) {
+                String[] instructorPennkey_splits = params.instructorPennkey.tokenize(" ");
+                for (String s in instructorPennkey_splits) {
                     if (!s.trim().isEmpty()) {
                         query = query.where {
-                            staffPennkey ==~ ~s.trim()
+                            instructorPennkey ==~ ~s.trim()
                         }
                     }
                 }
             }
-/*
-            if (params.ridSchoolSearch) {
-                def SchoolList = params.list('ridSchoolSearch')
-                if (SchoolList.size() > 0 && !SchoolList.contains("0")) {
-                    List<Long> sList = new LinkedList<Long>()
-                    for (String id in SchoolList)
-                        sList.add(Long.valueOf(id))
-                    query = query.where {
-                        school in RidSchool.findAllByIdInList(sList)
+            if (params.courseName) {
+                String[] courseName_splits = params.courseName.tokenize(" ");
+                for (String s in courseName_splits) {
+                    if (!s.trim().isEmpty()) {
+                        query = query.where {
+                            courseName ==~ ~s.trim()
+                        }
                     }
                 }
             }
@@ -175,35 +173,46 @@ class RidTransactionService {
                 }
             }
 
-            if (params.userName) {
-                String[] userName_splits = params.userName.split(" ");
-                for (String s in userName_splits) {
-                    if (!s.trim().isEmpty()) {
-                        query = query.where {
-                            //userQuestion ==~ ~"^.+ba\$"
-                            //userQuestion ==~ ~"^k.*"
-                            userName ==~ ~s.trim()
-                        }
-                    }
-                }
-            }
-            */
-            /*
-            if (params.userQuestion) {
-                String[] userQuestion_splits = params.userQuestion.split(" ");
-                for (String s in userQuestion_splits) {
-                    if (!s.trim().isEmpty()) {
-                        query = query.where {
-                            //userQuestion ==~ ~"^.+ba\$"
-                            //userQuestion ==~ ~"^k.*"
-                            userQuestion ==~ ~s.trim()
-                        }
+
+            if (params.ridSchoolSearch) {
+                def SchoolList = params.list('ridSchoolSearch')
+                if (SchoolList.size() > 0 && !SchoolList.contains("0")) {
+                    List<Long> sList = new LinkedList<Long>()
+                    for (String id in SchoolList)
+                        sList.add(Long.valueOf(id))
+                    query = query.where {
+                        school in RidSchool.findAllByIdInList(sList)
                     }
                 }
             }
 
+            if (params.ridLocationSearch) {
+                def LocationList = params.list('ridLocationSearch')
+                if (LocationList.size() > 0 && !LocationList.contains("0")) {
+                    List<Long> lList = new LinkedList<Long>()
+                    for (String id in LocationList)
+                        lList.add(Long.valueOf(id))
+                    query = query.where {
+                        location in RidLocation.findAllByIdInList(lList)
+                    }
+                }
+            }
+
+            if (params.ridSessionTypeSearch) {
+                def SessionTypeList = params.list('ridSessionTypeSearch')
+                if (SessionTypeList.size() > 0 && !SessionTypeList.contains("0")) {
+                    List<Long> stList = new LinkedList<Long>()
+                    for (String id in SessionTypeList)
+                        stList.add(Long.valueOf(id))
+                    query = query.where {
+                        sessionType in RidSessionType.findAllByIdInList(stList)
+                    }
+                }
+            }
+
+
             if (params.notes) {
-                String[] notes_splits = params.notes.split(" ");
+                String[] notes_splits = params.notes.tokenize(" ");
                 for (String s in notes_splits) {
                     if (!s.trim().isEmpty()) {
                         query = query.where {
@@ -211,7 +220,17 @@ class RidTransactionService {
                         }
                     }
                 }
-            }*/
+            }
+            if (params.sessionDescription) {
+                String[] sessionDescription_splits = params.sessionDescription.tokenize(" ");
+                for (String s in sessionDescription_splits) {
+                    if (!s.trim().isEmpty()) {
+                        query = query.where {
+                            sessionDescription ==~ ~s.trim()
+                        }
+                    }
+                }
+            }
 
             return query
         }
@@ -325,16 +344,6 @@ class RidTransactionService {
     }
 
     def createNewInsInstanceMethod(Map params, RidInsTransactionBase ridTransactionInstance) {
-        String otherRank = params.otherRank
-        if (otherRank != null && !otherRank.isEmpty()) {
-            if (RidRank.findAllByName(otherRank).size() == 0) {
-                def c = new RidRank(name: otherRank, inForm: 0)
-                c.save()
-                if (c.hasErrors()) println c.errors
-            }
-            if (RidRank.findAllByName(otherRank).size() > 0)
-                ridTransactionInstance.rank = RidRank.findByName(otherRank)
-        }
 
         String otherLocation = params.otherLocation
         if (otherLocation != null && !otherLocation.isEmpty()) {
@@ -345,6 +354,40 @@ class RidTransactionService {
             }
             if (RidLocation.findAllByName(otherLocation).size() > 0)
                 ridTransactionInstance.location = RidLocation.findByName(otherLocation)
+        }
+        String otherInstructionalMaterials = params.otherInstructionalMaterials
+        if (otherInstructionalMaterials != null && !otherInstructionalMaterials.isEmpty()) {
+            if (RidInstructionalMaterials.findAllByName(otherInstructionalMaterials).size() == 0) {
+                def e = new RidInstructionalMaterials(name: otherInstructionalMaterials, inForm: 0)
+                e.save()
+                if (e.hasErrors()) println e.errors
+            }
+            if (RidInstructionalMaterials.findAllByName(otherInstructionalMaterials).size() > 0)
+                ridTransactionInstance.instructionalMaterials = RidInstructionalMaterials.findByName(otherInstructionalMaterials)
+        }
+        String otherAudience = params.otherAudience
+        if (otherAudience != null && !otherAudience.isEmpty()) {
+            if (RidAudience.findAllByName(otherAudience).size() == 0) {
+                def e = new RidAudience(name: otherAudience, inForm: 0)
+                e.save()
+                if (e.hasErrors()) println e.errors
+            }
+            if (RidAudience.findAllByName(otherAudience).size() > 0)
+                ridTransactionInstance.audience = RidAudience.findByName(otherAudience)
+        }
+        String otherSessionType = params.otherSessionType
+        if (otherSessionType != null && !otherSessionType.isEmpty()) {
+            if (RidSessionType.findAllByNameAndRidLibraryUnit(otherSessionType,
+                    RidLibraryUnit.get(Long.valueOf(params.ridLibraryUnit.id))).size() == 0) {
+                def s = new RidSessionType(name: otherSessionType, inForm: 0,
+                        ridLibraryUnit: RidLibraryUnit.get(Long.valueOf(params.ridLibraryUnit.id)))
+                s.save()
+                if (s.hasErrors()) println s.errors
+            }
+            if (RidSessionType.findAllByNameAndRidLibraryUnit(otherSessionType,
+                    RidLibraryUnit.get(Long.valueOf(params.ridLibraryUnit.id))).size() > 0)
+                ridTransactionInstance.sessionType = RidSessionType.findByNameAndRidLibraryUnit(
+                        otherSessionType, RidLibraryUnit.get(Long.valueOf(params.ridLibraryUnit.id)))
         }
     }
 }

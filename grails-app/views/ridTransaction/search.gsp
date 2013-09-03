@@ -189,13 +189,14 @@
                     <div class="row-fluid">
                         <div class="span2 ">
                             <div class="control-group fieldcontain">
-                                <label class="control-label" for="staffPennkey">
-                                    <g:message code="ridTransaction.staffPennkey.label" default="Staff Pennkey"/>
+                                <label class="control-label" for="instructorPennkey">
+                                    <g:message code="ridTransaction.instructorPennkey.label"
+                                               default="Instructor Pennkey"/>
                                 </label>
 
                                 <div class="controls">
-                                    <g:textField id="staffPennkey" style="width:150px" class="userInput"
-                                                 name="staffPennkey"
+                                    <g:textField id="instructorPennkey" style="width:150px" class="userInput"
+                                                 name="instructorPennkey"
                                                  value=""/>
                                 </div>
                             </div>
@@ -204,15 +205,18 @@
 
                         <div class="span2 offset2">
                             <div class="control-group fieldcontain">
-                                <label class="control-label" for="userName">
-                                    <g:message code="ridTransaction.userName.label" default="User Name"/>
+                                <label class="control-label" for="courseName">
+                                    <g:message code="ridTransaction.courseName.label"
+                                               default="Course Name"/>
                                 </label>
 
                                 <div class="controls">
-                                    <g:textField id="userName" style="width:150px" class="userInput" name="userName"
+                                    <g:textField id="courseName" style="width:150px" class="userInput"
+                                                 name="courseName"
                                                  value=""/>
                                 </div>
                             </div>
+
                         </div>
 
                     </div>
@@ -253,19 +257,24 @@
 
                     </div>
 
-                    <div class="control-group fieldcontain">
-                        <label class="control-label" for="ridLocation">
-                            <g:message code="ridTransaction.ridLocation.label" default="Location"/>
-                        </label>
+                    <div class="row-fluid">
+                        <div class="span2 ">
+                            <div class="control-group fieldcontain">
+                                <label class="control-label" for="ridLocation">
+                                    <g:message code="ridTransaction.ridLocation.label" default="Location"/>
+                                </label>
 
-                        <div class="controls">
-                            <g:select id="ridLocationSearch" style="width:150px" name="ridLocationSearch"
-                                      noSelection="${['0': 'All Locations']}" multiple="true" value="0"
-                                      optionKey="id"
-                            //optionValue="${{ it.name.empty ? 'NOT SPECIFIED' : it.name }}"
-                            //from="${metridoc.rid.RidLocation.list()}"
-                                      from="${metridoc.rid.RidLocation.where { name != "" }.list()}"/>
+                                <div class="controls">
+                                    <g:select id="ridLocationSearch" style="width:150px" name="ridLocationSearch"
+                                              noSelection="${['0': 'All Locations']}" multiple="true" value="0"
+                                              optionKey="id"
+                                    //optionValue="${{ it.name.empty ? 'NOT SPECIFIED' : it.name }}"
+                                    //from="${metridoc.rid.RidLocation.list()}"
+                                              from="${metridoc.rid.RidLocation.where { name != "" }.list()}"/>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
 
                     <div class="control-group fieldcontain">
@@ -275,6 +284,17 @@
 
                         <div class="controls">
                             <g:textField id="notes" style="width:350px" class="userInput" name="notes" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="control-group fieldcontain">
+                        <label class="control-label" for="sessionDescription">
+                            <g:message code="ridTransaction.sessionDescription.label" default="Session Description"/>
+                        </label>
+
+                        <div class="controls">
+                            <g:textField id="sessionDescription" style="width:350px" class="userInput"
+                                         name="sessionDescription" value=""/>
                         </div>
                     </div>
 
@@ -288,8 +308,9 @@
         </div>
     </g:if>
     <g:else>
-        Not implemented
+        Not yet Implemented
     </g:else>
+
 </g:else>
 </div>
 </md:report>
