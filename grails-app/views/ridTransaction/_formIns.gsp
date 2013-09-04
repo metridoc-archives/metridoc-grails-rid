@@ -1,9 +1,9 @@
-<%@ page import="metridoc.rid.RidDepartment;metridoc.rid.RidSchool;metridoc.rid.RidLocation;metridoc.rid.RidRank;java.text.SimpleDateFormat;metridoc.rid.RidUserGoal;metridoc.rid.RidLibraryUnit;metridoc.rid.RidLibraryUnit;metridoc.rid.RidDepartment;metridoc.rid.RidCourseSponsor;metridoc.rid.RidConsTransaction;metridoc.rid.RidInsTransaction" %>
+<%@ page import="metridoc.rid.RidDepartment;metridoc.rid.RidSchool;metridoc.rid.RidLocation;metridoc.rid.RidRank;java.text.SimpleDateFormat;metridoc.rid.RidUserGoal;metridoc.rid.RidLibraryUnit;metridoc.rid.RidLibraryUnit;metridoc.rid.RidDepartment;metridoc.rid.RidCourseSponsor;metridoc.rid.RidConsTransaction;metridoc.rid.RidInsTransaction;metridoc.rid.RidAudience;metridoc.rid.RidInstructionalMaterials;metridoc.rid.RidSessionType" %>
 
 <r:require module="datePicker"/>
 
 <div class="row-fluid">
-    <div class="span3">
+    <div class="span2">
         <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'ridLibraryUnit', 'error')}">
             <label for="ridLibraryUnit">
                 <g:message code="ridTransaction.ridLibraryUnit.label" default="Library Unit"/>
@@ -30,105 +30,36 @@
         </div>
     </div>
 
-    <div class="span3">
-        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'staffPennkey', 'error')} ">
-            <label for="staffPennkey">
-                <g:message code="ridTransaction.staffPennkey.label" default="Staff Pennkey"/>
+    <div class="span2">
+        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'instructorPennkey', 'error')} ">
+            <label for="instructorPennkey">
+                <g:message code="ridTransaction.instructorPennkey.label" default="Instructor Pennkey"/>
                 <span class="required-indicator">*</span>
             </label>
-            <g:textField style="width:150px" class="userInput" name="staffPennkey" maxlength="100"
-                         required="" value="${ridTransactionInstance?.staffPennkey}"/>
+            <g:textField style="width:150px" class="userInput" name="instructorPennkey" maxlength="100"
+                         required="" value="${ridTransactionInstance?.instructorPennkey}"/>
+        </div>
+    </div>
+
+    <div class="span2">
+        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'coInstructorPennkey', 'error')} ">
+            <label for="coInstructorPennkey">
+                <g:message code="ridTransaction.coInstructorPennkey.label" default="Co-Instructor Pennkey"/>
+
+            </label>
+            <g:textField style="width:150px" class="userInput" name="coInstructorPennkey" maxlength="100"/>
         </div>
     </div>
 </div>
 
-
 <div class="row-fluid">
-    <div class="span2">
-        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'userName', 'error')} ">
-            <label for="userName">
-                <g:message code="ridTransaction.user.label" default="User Name"/>
-            </label>
-            <g:textField class="userInput" name="userName" style="width: 120px" maxlength="100"
-                         value="${ridTransactionInstance?.userName}"/>
-        </div>
-    </div>
-
-    <div class="span2">
-        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'rank', 'error')} required">
-            <label for="rank">
-                <g:message code="ridTransaction.rank.label" default="Rank"/>
-                <span class="required-indicator">*</span>
-            </label>
-            <%
-                rankList = RidRank.findAllByInForm(1)
-                if (ridTransactionInstance?.rank?.inForm == 0)
-                    rankList.add(0, RidRank.findById(
-                            ridTransactionInstance?.rank?.id))
-                rankList = rankList.sort { it.name }
-                rankList.addAll(RidRank.findAllByInForm(2))
-            %>
-            <select style="width:120px" id="rank" name="rank.id" required="" class="many-to-one">
-                <g:each in="${rankList}">
-                    <option value="${it.id}" inForm="${it.inForm}"
-                            <g:if test="${ridTransactionInstance?.rank?.id == it.id}">selected=""</g:if>>
-                        ${it.name}
-                    </option>
-                </g:each>
-            </select>
-        </div>
-
-        <div id="otherRankDiv" style="display:none"
-             class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'otherRank', 'error')} ">
-            <label for="otherRank">
-                <g:message code="ridTransaction.otherRank.label" default="Other Rank"/>
-            </label>
-            <g:textField class="userInput" name="otherRank" style="width:120px" maxlength="50"
-                         value="${ridTransactionInstance?.otherRank}"/>
-        </div>
-    </div>
-
-    <div class="span2">
-        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'school', 'error')} required">
-            <label for="school">
-                <g:message code="ridTransaction.school.label" default="School"/>
-                <span class="required-indicator">*</span>
-            </label>
-            <% schoolList = RidSchool.findAllByInForm(1) %>
-            <% if (ridTransactionInstance?.school?.inForm == 0)
-                schoolList.add(0, RidSchool.findById(
-                        ridTransactionInstance?.school?.id))
-            schoolList = schoolList.sort { it.name }
-            %>
-            <% schoolList.addAll(RidSchool.findAllByInForm(2)) %>
-            <select style="width:120px" id="school" name="school.id" required="" class="many-to-one">
-                <g:each in="${schoolList}">
-                    <option value="${it.id}" inForm="${it.inForm}"
-                            <g:if test="${ridTransactionInstance?.school?.id == it.id}">selected=""</g:if>>
-                        ${it.name}
-                    </option>
-                </g:each>
-            </select>
-        </div>
-
-        <div id="otherSchoolDiv" style="display:none;"
-             class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'otherSchool', 'error')} ">
-            <label for="otherSchool">
-                <g:message code="ridTransaction.otherSchool.label" default="Other School"/>
-            </label>
-            <g:textField class="userInput" style="width:120px" name="otherSchool" maxlength="50"
-                         value="${ridTransactionInstance?.otherSchool}"/>
-        </div>
-    </div>
-
-
     <div class="span2">
         <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'location', 'error')} required">
             <label for="location">
                 <g:message code="ridTransaction.location.label" default="Location"/>
                 <span class="required-indicator">*</span>
             </label>
-            <% locationList = RidLocation.findAllByInForm(1) %>
+            <% def locationList = RidLocation.findAllByInForm(1) %>
             <% if (ridTransactionInstance?.location?.inForm == 0)
                 locationList.add(0, RidLocation.findById(
                         ridTransactionInstance?.location?.id))
@@ -155,9 +86,6 @@
         </div>
     </div>
 
-</div>
-
-<div class="row-fluid">
 
     <div class="span2">
         <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'prepTime', 'error')} required">
@@ -195,6 +123,27 @@
 
 <div class="row-fluid">
     <div class="span2">
+        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'sequenceName', 'error')} ">
+            <label for="sequenceName">
+                <g:message code="ridTransaction.sequenceName.label" default="Sequence Name"/>
+
+            </label>
+            <g:textField style="width:150px" class="userInput" name="sequenceName" maxlength="100"/>
+        </div>
+    </div>
+
+    <div class="span2">
+        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'sequenceUnit', 'error')}">
+            <label for="sequenceUnit">
+                <g:message code="ridTransaction.sequenceUnit.label" default="Module Number"/>
+
+            </label>
+            <g:field class="userInput" style="width:120px"
+                     name="sequenceUnit" type="number" value="${ridTransactionInstance.sequenceUnit}"/>
+        </div>
+    </div>
+
+    <div class="span2">
         <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'courseName', 'error')} ">
             <label for="courseName">
                 <g:message code="ridTransaction.courseName.label" default="Course Name"/>
@@ -214,7 +163,6 @@
         </div>
     </div>
 
-
     <div class="span2">
         <div class="fieldcontain ${hasErrors(bea: ridTransactionInstance, field: 'department', 'error')}">
             <label for="department">
@@ -230,6 +178,9 @@
         </div>
     </div>
 
+</div>
+
+<div class="row-fluid">
 
     <div class="span2">
         <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'facultySponsor', 'error')} ">
@@ -240,32 +191,170 @@
                          value="${ridTransactionInstance?.facultySponsor}"/>
         </div>
     </div>
+
+    <div class="span2">
+        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'school', 'error')} required">
+            <label for="school">
+                <g:message code="ridTransaction.school.label" default="School"/>
+                <span class="required-indicator">*</span>
+            </label>
+            <% def schoolList = RidSchool.findAllByInForm(1) %>
+            <% if (ridTransactionInstance?.school?.inForm == 0)
+                schoolList.add(0, RidSchool.findById(
+                        ridTransactionInstance?.school?.id))
+            schoolList = schoolList.sort { it.name }
+            %>
+            <% schoolList.addAll(RidSchool.findAllByInForm(2)) %>
+            <select style="width:120px" id="school" name="school.id" required="" class="many-to-one">
+                <g:each in="${schoolList}">
+                    <option value="${it.id}" inForm="${it.inForm}"
+                            <g:if test="${ridTransactionInstance?.school?.id == it.id}">selected=""</g:if>>
+                        ${it.name}
+                    </option>
+                </g:each>
+            </select>
+        </div>
+
+        <div id="otherSchoolDiv" style="display:none;"
+             class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'otherSchool', 'error')} ">
+            <label for="otherSchool">
+                <g:message code="ridTransaction.otherSchool.label" default="Other School"/>
+            </label>
+            <g:textField class="userInput" style="width:120px" name="otherSchool" maxlength="50"
+                         value="${ridTransactionInstance?.otherSchool}"/>
+        </div>
+    </div>
+
 </div>
 
 <div class="row-fluid">
     <div class="span2">
-        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'coInstructor', 'error')} ">
-            <label for="coInstructor">
-                <g:message code="ridTransaction.coInstructor.label" default="Co-instructor"/>
+        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'sessionType', 'error')} required">
+            <label for="sessionType">
+                <g:message code="ridTransaction.sessionType.label" default="Session Type "/>
+                <span class="required-indicator">*</span>
             </label>
-            <g:textField class="userInput" name="coInstructor" style="width: 120px" maxlength="100"
-                         value="${ridTransactionInstance?.coInstructor}"/>
+
+
+            <div id="currentSessionType" style="display: none;">${ridTransactionInstance?.sessionType?.id}</div>
+            <%
+                typeList = metridoc.rid.RidSessionType.findAllByInFormAndRidLibraryUnit(1,
+                        ridTransactionInstance?.ridLibraryUnit ?: RidLibraryUnit.get(1))
+                if (ridTransactionInstance?.sessionType?.inForm == 0)
+                    typeList.add(0, metridoc.rid.RidSessionType.findById(
+                            ridTransactionInstance?.sessionType?.id))
+                typeList = typeList.sort { it.name }
+                typeList.addAll(metridoc.rid.RidSessionType.findAllByInFormAndRidLibraryUnit(2,
+                        ridTransactionInstance?.ridLibraryUnit ?: RidLibraryUnit.get(1)))
+            %>
+            <select style="width:120px" id="sessionType" name="sessionType.id" required="" class="many-to-one">
+                <g:each in="${typeList}">
+                    <option value="${it.id}" inForm="${it.inForm}"
+                            <g:if test="${ridTransactionInstance?.sessionType?.id == it.id}">selected=""</g:if>>
+                        ${it.name}
+                    </option>
+                </g:each>
+            </select>
+        </div>
+
+        <div id="otherSessionTypeDiv" style="display:none;"
+             class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'otherSessionType', 'error')} ">
+            <label for="otherSessionType">
+                <g:message code="ridTransaction.otherSessionType.label" default="Other Session Type"/>
+            </label>
+            <g:textField class="userInput" name="otherSessionType" style="width:120px"
+                         maxlength="100" value="${ridTransactionInstance?.otherSessionType}"/>
         </div>
     </div>
 
     <div class="span2">
-        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'instructionalMaterials', 'error')} ">
+        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'instructionalMaterials', 'error')} required">
             <label for="instructionalMaterials">
                 <g:message code="ridTransaction.instructionalMaterials.label" default="Instructional Materials"/>
+
             </label>
-            <g:textField class="userInput" name="instructionalMaterials" style="width: 120px" maxlength="300"
-                         value="${ridTransactionInstance?.instructionalMaterials}"/>
+
+            <div id="currentInstructionalMaterials"
+                 style="display: none;">${ridTransactionInstance?.instructionalMaterials?.id}</div>
+            <%
+                instructionalMaterialsList = RidInstructionalMaterials.findAllByInForm(1)
+                if (ridTransactionInstance?.instructionalMaterials?.inForm == 0)
+                    instructionalMaterialsList.add(0, RidInstructionalMaterials.findById(
+                            ridTransactionInstance?.instructionalMaterials?.id))
+                instructionalMaterialsList = instructionalMaterialsList.sort { it.name }
+                instructionalMaterialsList.addAll(RidInstructionalMaterials.findAllByInForm(2))
+            %>
+            <select style="width:120px" id="instructionalMaterials" name="instructionalMaterials.id" required=""
+                    class="many-to-one">
+                <g:each in="${instructionalMaterialsList}">
+                    <option value="${it.id}" inForm="${it.inForm}"
+                            <g:if test="${ridTransactionInstance?.instructionalMaterials?.id == it.id}">selected=""</g:if>>
+                        ${it.name}
+                    </option>
+                </g:each>
+            </select>
+        </div>
+
+        <div id="otherInstructionalMaterialsDiv" style="display:none"
+             class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'otherInstructionalMaterials', 'error')} ">
+            <label for="otherInstructionalMaterials">
+                <g:message code="ridTransaction.otherInstructionalMaterials.label"
+                           default="Other InstructionalMaterials"/>
+            </label>
+            <g:textField class="userInput" name="otherInstructionalMaterials" style="width:120px" maxlength="50"
+                         value="${ridTransactionInstance?.otherInstructionalMaterials}"/>
         </div>
     </div>
+
+    <div class="span2">
+        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'audience', 'error')} required">
+            <label for="audience">
+                <g:message code="ridTransaction.audience.label" default="Audience"/>
+
+            </label>
+
+            <div id="currentAudience" style="display: none;">${ridTransactionInstance?.audience?.id}</div>
+            <%
+                audienceList = RidAudience.findAllByInForm(1)
+                if (ridTransactionInstance?.audience?.inForm == 0)
+                    audienceList.add(0, RidAudience.findById(
+                            ridTransactionInstance?.audience?.id))
+                audienceList = audienceList.sort { it.name }
+                audienceList.addAll(RidAudience.findAllByInForm(2))
+            %>
+            <select style="width:120px" id="audience" name="audience.id" required="" class="many-to-one">
+                <g:each in="${audienceList}">
+                    <option value="${it.id}" inForm="${it.inForm}"
+                            <g:if test="${ridTransactionInstance?.audience?.id == it.id}">selected=""</g:if>>
+                        ${it.name}
+                    </option>
+                </g:each>
+            </select>
+        </div>
+
+        <div id="otherAudienceDiv" style="display:none"
+             class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'otherAudience', 'error')} ">
+            <label for="otherAudience">
+                <g:message code="ridTransaction.otherAudience.label" default="Other Audience"/>
+            </label>
+            <g:textField class="userInput" name="otherAudience" style="width:120px" maxlength="50"
+                         value="${ridTransactionInstance?.otherAudience}"/>
+        </div>
+    </div>
+
+    <div class="span2">
+        <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'requestor', 'error')} ">
+            <label for="requestor">
+                <g:message code="ridTransaction.requestor.label" default="Requestor"/>
+            </label>
+            <g:textField style="width:150px" class="userInput" name="requestor" maxlength="100"
+                         value="${ridTransactionInstance?.requestor}"/>
+        </div>
+    </div>
+
 </div>
 
 <div class="row-fluid">
-
     <div class="span4">
         <div class="fieldcontain ${hasErrors(bean: ridTransactionInstance, field: 'sessionDescription', 'error')} ">
             <label for="sessionDescription">
@@ -288,8 +377,6 @@
 
         </div>
     </div>
-
 </div>
-
 
 
