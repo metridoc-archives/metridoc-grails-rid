@@ -35,7 +35,7 @@ grails.project.dependency.resolution = {
         build(":release:2.2.1", ":bintray-upload:0.2") {
             export = false
         }
-        compile(":metridoc-core:0.7.1")
+        compile(":metridoc-core:0.7.3")
         //TODO: Remove when we upgrade metridoc core
         compile ":hibernate:$grailsVersion"
         compile ":webxml:1.4.1"
