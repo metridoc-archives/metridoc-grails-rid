@@ -32,6 +32,9 @@ grails.project.dependency.resolution = {
 
     plugins {
         build(":rest-client-builder:1.0.3")
+        build(":release:2.2.1", ":bintray-upload:0.2") {
+            export = false
+        }
         compile(":metridoc-core:0.7.3")
         //TODO: Remove when we upgrade metridoc core
         compile ":hibernate:$grailsVersion"
