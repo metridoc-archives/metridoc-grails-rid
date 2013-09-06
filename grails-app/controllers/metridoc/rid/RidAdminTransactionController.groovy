@@ -21,8 +21,11 @@ class RidAdminTransactionController {
 
     def consultation() {
         session.setAttribute("transType", new String("consultation"))
-        if (session.getAttribute("prev").equals("stats")) {
-            redirect(controller: "RidAdminTransaction", action: "stats")
+        if (session.getAttribute("prev").equals("RidAdminAudience") ||
+                session.getAttribute("prev").equals("RidAdminInstructionalMaterials") ||
+                session.getAttribute("prev").equals("RidAdminLocation") ||
+                session.getAttribute("prev").equals("RidAdminSessionType")){
+            redirect(controller: "RidAdminLibraryUnit", action: "index")
         } else {
             redirect(controller: session.getAttribute("prev"), action: "index")
         }
@@ -34,10 +37,9 @@ class RidAdminTransactionController {
         if (session.getAttribute("prev").equals("RidAdminCourseSponsor") ||
                 session.getAttribute("prev").equals("RidAdminModeOfConsultation") ||
                 session.getAttribute("prev").equals("RidAdminServiceProvided") ||
-                session.getAttribute("prev").equals("RidAdminUserGoal")) {
+                session.getAttribute("prev").equals("RidAdminUserGoal")||
+                session.getAttribute("prev").equals("RidAdminRank")) {
             redirect(controller: "RidAdminLibraryUnit", action: "index")
-        } else if (session.getAttribute("prev").equals("stats")) {
-            redirect(controller: "RidAdminTransaction", action: "stats")
         } else {
             redirect(controller: session.getAttribute("prev"), action: "index")
         }
