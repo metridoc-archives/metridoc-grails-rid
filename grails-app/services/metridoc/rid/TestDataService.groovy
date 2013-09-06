@@ -217,6 +217,7 @@ class TestDataService {
                     if (c.hasErrors()) println c.errors
                 }
             }
+            def outsidePleaseIndicate = "Outside Penn (please indicate)"
             if (!RidCourseSponsor.findByName(outsidePleaseIndicate)) {
                 new RidCourseSponsor(name: outsidePleaseIndicate, inForm: 2).save()
             }
