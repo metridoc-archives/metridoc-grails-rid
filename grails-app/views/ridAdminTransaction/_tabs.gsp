@@ -1,19 +1,7 @@
+<r:external dir="css" file="ridtrans_admin.css" plugin="metridoc-rid"/>
 
 <ul class="nav nav-tabs green">
 
-    <style type="text/css">
-    .green a,
-    .green a:hover {
-        color: green
-    }
-
-    .nav li.dropdown > .dropdown-toggle .caret {
-        color: green;
-        border-top-color: green;
-        border-bottom-color: green;
-    }
-
-    </style>
     <li>
     <li class="dropdown">
         <a class="dropdown-toggle green" data-toggle="dropdown">

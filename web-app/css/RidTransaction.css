@@ -75,3 +75,24 @@ label {
     background: #fff;
     background-color: #ffffff;
 }
+
+.nav-tabs .active a,
+.nav-tabs .active a:hover {
+    font-size: 15px;
+}
+
+.nav-tabs  a,
+.nav-tabs  a:hover {
+    font-size: 13px;
+}
+
+.green a,
+.green a:hover {
+    color: green
+}
+
+.nav li.dropdown > .dropdown-toggle .caret {
+    color: green;
+    border-top-color: green;
+    border-bottom-color: green;
+}
