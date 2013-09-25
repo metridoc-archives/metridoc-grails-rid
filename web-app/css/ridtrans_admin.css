@@ -9,4 +9,14 @@
     background-color: #0088cc;
 }
 
+.green a,
+.green a:hover {
+    color: green
+}
+
+.nav li.dropdown > .dropdown-toggle .caret {
+    color: green;
+    border-top-color: green;
+    border-bottom-color: green;
+}
 

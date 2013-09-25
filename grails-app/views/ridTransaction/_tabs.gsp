@@ -1,15 +1,4 @@
-<style type="text/css">
-.nav-tabs .active a,
-.nav-tabs .active a:hover {
-    font-size: 15px;
-}
 
-.nav-tabs  a,
-.nav-tabs  a:hover {
-    font-size: 13px;
-}
-
-</style>
 <br>
 
 <ul class="nav nav-tabs">
@@ -42,19 +31,6 @@
                 icon: 'icon-cloud-upload']"/>
 
 <li>
-    <style type="text/css">
-    .green a,
-    .green a:hover {
-        color: green
-    }
-
-    .nav li.dropdown > .dropdown-toggle .caret {
-        color: green;
-        border-top-color: green;
-        border-bottom-color: green;
-    }
-
-    </style>
 
 <g:if env="development">
     <g:if test="${actionName == "stats" || actionName == "statSearch" || actionName == "statGraph" || actionName == "statQuery"}">
