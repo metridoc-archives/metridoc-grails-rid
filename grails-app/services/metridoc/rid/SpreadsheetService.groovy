@@ -11,9 +11,9 @@ import java.text.SimpleDateFormat
 class SpreadsheetService extends ValidateSpreadsheetService{
 
 
-    def getInstancesFromSpreadsheet(MultipartFile uploadedFile, FlashScope flash) {
+    //Workbook generated using convertToWorkbook in ValidateSpreadsheetService
+    def getInstancesFromSpreadsheet(Workbook wb, FlashScope flash) {
 
-        Workbook wb = WorkbookFactory.create(uploadedFile.inputStream)
         Sheet sheet = wb.getSheetAt(0)
         int colNum = 1
         Boolean iterNext = Boolean.TRUE
@@ -109,6 +109,7 @@ class SpreadsheetService extends ValidateSpreadsheetService{
                 return false
             }
         }
+
         return true
     }
 

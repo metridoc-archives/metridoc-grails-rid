@@ -10,9 +10,13 @@ import java.text.SimpleDateFormat
 
 class ValidateSpreadsheetService {
 
-    def checkSpreadsheetFormat(MultipartFile uploadedFile) {
-
+    def convertToWorkbook(MultipartFile uploadedFile){
         Workbook wb = WorkbookFactory.create(uploadedFile.inputStream)
+        return wb
+    }
+
+    def checkSpreadsheetFormat(Workbook wb) {
+
         Sheet sheet = wb.getSheetAt(0)
         int colNum = 1
 
@@ -112,7 +116,7 @@ class ValidateSpreadsheetService {
                         return false
                     }
                     if (!RidServiceProvided.findByName(instance.get(i).trim())) {
-                        flash.alerts << "Invalid Service Provided at " + cellRef.formatAsString()
+                        flash.alerts << "Invalid Service Provided at " + cellRef.formatAsString() + instance.get(i)
                         return false
                     }
                     if (!RidServiceProvided.findByNameAndRidLibraryUnit(

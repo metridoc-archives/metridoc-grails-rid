@@ -27,9 +27,13 @@ class RidTransactionController {
     def ridManageLibraryUnitSpreadsheetsService
     def ridStatisticsService
 
+    /**
+     * This controller handles both consultation and instruction transactions
+     * The type is controlled by a session attribute, and is set to consultation by default
+     * @return
+     */
     def index() {
         session.setAttribute("transType", new String("consultation"))//Sets default mode to consultation
-        session.setAttribute("display", new String("dropdown"))
         redirect(action: "create")
     }
 
@@ -47,24 +51,7 @@ class RidTransactionController {
         }
     }
 
-    def templateList() {
-
-        if (SecurityUtils.getSubject().getPrincipal()) {
-            if (session.getAttribute("transType") == "consultation") {
-                def query = RidConsTransactionTemplate.where {
-                    templateOwner == SecurityUtils.getSubject().getPrincipal().toString()
-                }
-                [ridTransactionInstanceList: query.list()]
-            } else {
-                def query = RidInsTransactionTemplate.where {
-                    templateOwner == SecurityUtils.getSubject().getPrincipal().toString()
-                }
-                [ridTransactionInstanceList: query.list()]
-            }
-        } else {
-            redirect(action: "create")
-        }
-    }
+    //TODO: Refactor using an abstract getTransactionClass like the admin controllers do to remove duplicated code
 
     def create() {
         if (session?.getAttribute("transType") == null) {
@@ -151,55 +138,6 @@ class RidTransactionController {
         }
     }
 
-    def remember() {
-
-        if (session.getAttribute("transType") == "consultation") {
-            withForm {
-                def ridTransactionInstance
-                if (!params.dateOfConsultation.empty)
-                    params.dateOfConsultation = new SimpleDateFormat("MM/dd/yyyy").parse(params.dateOfConsultation);
-                ridTransactionInstance = new RidConsTransactionTemplate(params)
-                ridTransactionInstance.templateOwner = SecurityUtils.getSubject().getPrincipal().toString()
-                ridTransactionService.createNewConsInstanceMethod(params, ridTransactionInstance)
-                if (!ridTransactionInstance.save(flush: true)) {
-                    render(view: "create", model: [ridTransactionInstance: ridTransactionInstance])
-                    return
-                }
-
-                flash.message = message(code: 'default.created.message',
-                        args: [message(code: 'ridTransaction.label',
-                                default: 'RidConsTransaction Template'), ridTransactionInstance.id])
-                redirect(action: "create")
-            }.invalidToken {
-                if (SecurityUtils.getSubject().getPrincipal())
-                    flash.alerts << "Don't click the remember button more than one time to make duplicated submission!"
-                redirect(action: "list")
-            }
-        } else {
-            withForm {
-                def ridTransactionInstance
-                if (!params.dateOfInstruction.empty)
-                    params.dateOfInstruction = new SimpleDateFormat("MM/dd/yyyy").parse(params.dateOfInstruction);
-                ridTransactionInstance = new RidInsTransactionTemplate(params)
-                ridTransactionInstance.templateOwner = SecurityUtils.getSubject().getPrincipal().toString()
-                ridTransactionService.createNewInsInstanceMethod(params, ridTransactionInstance)
-                if (!ridTransactionInstance.save(flush: true)) {
-                    render(view: "create", model: [ridTransactionInstance: ridTransactionInstance])
-                    return
-                }
-
-                flash.message = message(code: 'default.created.message',
-                        args: [message(code: 'ridTransaction.label',
-                                default: 'RidInsTransaction Template'), ridTransactionInstance.id])
-                redirect(action: "create")
-            }.invalidToken {
-                if (SecurityUtils.getSubject().getPrincipal())
-                    flash.alerts << "Don't click the remember button more than one time to make duplicated submission!"
-                redirect(action: "list")
-            }
-        }
-
-    }
 
     def update(Long id, Long version) {
 
@@ -282,7 +220,9 @@ class RidTransactionController {
             }
         }
     }
-
+/**
+ * Note that this method controls the "edit" view. Update is responsible for actually changing the transaction
+ */
     def edit(Long id) {
 
         if (session.getAttribute("transType") == "consultation") {
@@ -392,6 +332,9 @@ class RidTransactionController {
 
     }
 
+    /**
+     * Controls the search view. Query carries out the search itself
+     */
     def search() {
         session.setAttribute("prev", new String("search"))
     }
@@ -417,6 +360,7 @@ class RidTransactionController {
 
         withForm {
             MultipartFile uploadedFile = request.getFile("spreadsheetUpload")
+            Workbook wb = spreadsheetService.convertToWorkbook(uploadedFile)
             if (uploadedFile == null || uploadedFile.empty) {
                 flash.alerts << "No file was provided"
                 redirect(action: "spreadsheetUpload")
@@ -429,7 +373,7 @@ class RidTransactionController {
                 return
             }
 
-            if (!spreadsheetService.checkSpreadsheetFormat(uploadedFile)) {
+            if (!spreadsheetService.checkSpreadsheetFormat(wb)) {
                 flash.alerts << "Invalid Spreadsheet Format. Cannot Parse it."
                 redirect(action: "spreadsheetUpload")
                 return
@@ -449,7 +393,7 @@ class RidTransactionController {
                 }
             }
 
-            List<List<String>> allInstances = spreadsheetService.getInstancesFromSpreadsheet(uploadedFile, flash)
+            List<List<String>> allInstances = spreadsheetService.getInstancesFromSpreadsheet(wb, flash)
             if (!allInstances.size()) {
                 redirect(action: "spreadsheetUpload")
                 return
@@ -492,6 +436,83 @@ class RidTransactionController {
         }
     }
 
+    /**
+     * These two methods are used in the WIP form templates
+     */
+    def templateList() {
+
+        if (SecurityUtils.getSubject().getPrincipal()) {
+            if (session.getAttribute("transType") == "consultation") {
+                def query = RidConsTransactionTemplate.where {
+                    templateOwner == SecurityUtils.getSubject().getPrincipal().toString()
+                }
+                [ridTransactionInstanceList: query.list()]
+            } else {
+                def query = RidInsTransactionTemplate.where {
+                    templateOwner == SecurityUtils.getSubject().getPrincipal().toString()
+                }
+                [ridTransactionInstanceList: query.list()]
+            }
+        } else {
+            redirect(action: "create")
+        }
+    }
+
+    def remember() {
+
+        if (session.getAttribute("transType") == "consultation") {
+            withForm {
+                def ridTransactionInstance
+                if (!params.dateOfConsultation.empty)
+                    params.dateOfConsultation = new SimpleDateFormat("MM/dd/yyyy").parse(params.dateOfConsultation);
+                ridTransactionInstance = new RidConsTransactionTemplate(params)
+                ridTransactionInstance.templateOwner = SecurityUtils.getSubject().getPrincipal().toString()
+                ridTransactionService.createNewConsInstanceMethod(params, ridTransactionInstance)
+                if (!ridTransactionInstance.save(flush: true)) {
+                    render(view: "create", model: [ridTransactionInstance: ridTransactionInstance])
+                    return
+                }
+
+                flash.message = message(code: 'default.created.message',
+                        args: [message(code: 'ridTransaction.label',
+                                default: 'RidConsTransaction Template'), ridTransactionInstance.id])
+                redirect(action: "create")
+            }.invalidToken {
+                if (SecurityUtils.getSubject().getPrincipal())
+                    flash.alerts << "Don't click the remember button more than one time to make duplicated submission!"
+                redirect(action: "list")
+            }
+        } else {
+            withForm {
+                def ridTransactionInstance
+                if (!params.dateOfInstruction.empty)
+                    params.dateOfInstruction = new SimpleDateFormat("MM/dd/yyyy").parse(params.dateOfInstruction);
+                ridTransactionInstance = new RidInsTransactionTemplate(params)
+                ridTransactionInstance.templateOwner = SecurityUtils.getSubject().getPrincipal().toString()
+                ridTransactionService.createNewInsInstanceMethod(params, ridTransactionInstance)
+                if (!ridTransactionInstance.save(flush: true)) {
+                    render(view: "create", model: [ridTransactionInstance: ridTransactionInstance])
+                    return
+                }
+
+                flash.message = message(code: 'default.created.message',
+                        args: [message(code: 'ridTransaction.label',
+                                default: 'RidInsTransaction Template'), ridTransactionInstance.id])
+                redirect(action: "create")
+            }.invalidToken {
+                if (SecurityUtils.getSubject().getPrincipal())
+                    flash.alerts << "Don't click the remember button more than one time to make duplicated submission!"
+                redirect(action: "list")
+            }
+        }
+
+    }
+
+    /**
+     * These methods are used in the WIP statistical analysis features
+     */
+
+
     def stats() {
         def queryResult = ridStatisticsService.getStats(params, session.getAttribute("transType"))
         render(view: "/ridTransaction/stats",
@@ -531,6 +552,9 @@ class RidTransactionController {
         return
     }
 
+    /**
+     * Functions for switching between consultation and instructional, and between transaction and admin views
+     */
     def consultation() {
         session.setAttribute("transType", new String("consultation"))
         redirect(action: session.getAttribute("prev"))
@@ -543,22 +567,5 @@ class RidTransactionController {
 
     def switchMode() {
         redirect(controller: "RidAdminTransaction", action: "index")
-    }
-
-    //Temporary display changing methods
-
-    def pills() {
-        session.setAttribute("display", new String("pills"))
-        redirect(action: session.getAttribute("prev"))
-    }
-
-    def tabs() {
-        session.setAttribute("display", new String("tabs"))
-        redirect(action: session.getAttribute("prev"))
-    }
-
-    def dropdown() {
-        session.setAttribute("display", new String("dropdown"))
-        redirect(action: session.getAttribute("prev"))
     }
 }
