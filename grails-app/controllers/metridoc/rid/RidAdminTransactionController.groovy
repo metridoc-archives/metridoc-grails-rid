@@ -5,7 +5,10 @@ class RidAdminTransactionController {
 
     static accessControl = { role(name: "ROLE_ADMIN") }
 
-
+    /**
+     * The index and list methods serve to set up the default values for the adminstration pane
+     * Currently, this means consultation transactions, and RidLibraryUnit as the target domain
+     */
 
     def index() {
         session.setAttribute("transType", new String("consultation"))//Sets default mode to consultation
@@ -18,6 +21,11 @@ class RidAdminTransactionController {
         session.setAttribute("transType", new String("consultation"))//Sets default mode to consultation
         redirect(controller: "RidAdminLibraryUnit", action: "index")
     }
+
+    /**
+     * Toggle for switching between transaction types.
+     * If the current pane is of a domain class that transaction type doesn't have, it switches to Library Unit
+     */
 
     def consultation() {
         session.setAttribute("transType", new String("consultation"))
@@ -45,7 +53,9 @@ class RidAdminTransactionController {
         }
     }
 
-
+    /**
+     * Goes back to the transaction creation page
+     */
 
     def switchMode() {
         redirect(controller: "RidTransaction", action: "index")

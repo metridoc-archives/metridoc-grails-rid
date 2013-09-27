@@ -1,7 +1,11 @@
 package metridoc.rid
 
 abstract class RidAdminBaseController {
-    //def domainClass
+
+    /**
+     * This class provides the common methods for creating, editing, and deleting domain objects
+     * Each of the AdminFooControllers extends this base class and has a domainClass field
+     */
 
     abstract Class getDomainClass()
 
@@ -11,6 +15,9 @@ abstract class RidAdminBaseController {
         role(name: "ROLE_ADMIN")
     }
 
+    /**
+     * Index and List set a session attribute to ensure that after doing administrative actions, you are redirected properly
+     */
     def index() {
         session.setAttribute("prev", new String(getClass().getSimpleName().minus("Controller")))
         redirect(action: "list", params: params)
