@@ -38,11 +38,10 @@ class SpreadsheetServiceTests {
          GrailsWebUtil.bindMockWebRequest();
          FlashScope fs = new GrailsFlashScope()
          fs.put("alerts", "test")
-
-         assert RidConsTransaction.list().size() == 0
+         def oldCount = RidConsTransaction.list().size()
          List<List<String>> instance = spreadsheetService.getInstancesFromSpreadsheet(goodWB, fs)
          spreadsheetService.saveToDatabase(instance, "testSpreadsheet", fs)
-         assert RidConsTransaction.list().size() == 1
+         assert RidConsTransaction.list().size() > oldCount
      }
 
 
