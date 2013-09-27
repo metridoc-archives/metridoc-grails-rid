@@ -1,5 +1,6 @@
 package metridoc.rid
 
+import org.apache.poi.ss.usermodel.Workbook
 import org.codehaus.groovy.grails.io.support.ClassPathResource
 import org.springframework.web.multipart.MultipartFile
 
@@ -9,6 +10,10 @@ class RidAdminLibraryUnitController extends RidAdminBaseController {
     def spreadsheetService
     def ridManageLibraryUnitSpreadsheetsService
 
+    /**
+     * Because RidLibraryUnits are connected to other domain objects, and because they have associated spreadsheets
+     * this controller overwrites some of the base admin methods
+     */
     def save() {
         withForm {
             def ridInstance = new RidLibraryUnit(params)
@@ -25,6 +30,7 @@ class RidAdminLibraryUnitController extends RidAdminBaseController {
 
             // check and save spreadsheet
             MultipartFile uploadedFile = request.getFile('spreadsheetUpload')
+            Workbook wb = spreadsheetService.convertToWorkbook(uploadedFile)
             if (uploadedFile != null && !uploadedFile.empty) {
                 if (!spreadsheetService.checkFileType(uploadedFile.getContentType())) {
                     flash.alerts << "Invalid File Type. Only Excel Files are accepted!"
@@ -36,7 +42,7 @@ class RidAdminLibraryUnitController extends RidAdminBaseController {
                     redirect(action: "list")
                     return
                 }
-                if (!spreadsheetService.checkSpreadsheetFormat(uploadedFile)) {
+                if (!spreadsheetService.checkSpreadsheetFormat(wb)) {
                     flash.alerts << "Invalid Spreadsheet Format. Cannot Parse it."
                     redirect(action: "spreadsheetUpload")
                     return
@@ -96,6 +102,7 @@ class RidAdminLibraryUnitController extends RidAdminBaseController {
 
             // check and update spreadsheet file
             MultipartFile uploadedFile = request.getFile('spreadsheetUpload')
+            Workbook wb = spreadsheetService.convertToWorkbook(uploadedFile)
             if (uploadedFile != null && !uploadedFile.empty) {
                 if (!spreadsheetService.checkFileType(uploadedFile.getContentType())) {
                     flash.alerts << "Invalid File Type. Only Excel Files are accepted!"
@@ -107,7 +114,7 @@ class RidAdminLibraryUnitController extends RidAdminBaseController {
                     redirect(action: "list")
                     return
                 }
-                if (!spreadsheetService.checkSpreadsheetFormat(uploadedFile)) {
+                if (!spreadsheetService.checkSpreadsheetFormat(wb)) {
                     flash.alerts << "Invalid Spreadsheet Format. Cannot Parse it."
                     redirect(action: "spreadsheetUpload")
                     return

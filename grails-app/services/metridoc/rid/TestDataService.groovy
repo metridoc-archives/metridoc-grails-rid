@@ -1,6 +1,10 @@
 package metridoc.rid
 
 class TestDataService {
+    /**
+     * For each domain object, check if any exist in the database
+     * If not, populate the table with initial domain objects
+     */
 
     def populateTestFields() {
         if (!RidLibraryUnit.first()) {
